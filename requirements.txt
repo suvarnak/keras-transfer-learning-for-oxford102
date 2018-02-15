@@ -8,4 +8,4 @@ scikit_learn
 theano==0.9.0
 h5py
 Pillow
-tensorflow-gpu
+tensorflow-gpu==1.4
