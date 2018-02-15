@@ -1,3 +1,8 @@
+## Original code is modified to experiment with batch-size, weigh initializations , weigh update algorithm to facilitate. learning from few examples
+
+## Following is readme file of original code
+
+
 ## See my application for identifying plants - [Plant Care](https://plants-care.com). It works using the code from the model implemented in this repo.
 
 # Keras pretrained models (VGG16, InceptionV3, Resnet50, Resnet152) + Transfer Learning for predicting classes in the Oxford 102 flower dataset (or any custom dataset)
