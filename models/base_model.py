@@ -27,6 +27,7 @@ class BaseModel(object):
     def _create(self):
         raise NotImplementedError('subclasses must override _create()')
 
+
     def _fine_tuning(self):
         self.freeze_top_layers()
 
