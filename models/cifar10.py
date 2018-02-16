@@ -59,7 +59,7 @@ class CIFAR10(BaseModel):
         model.add(Dropout(0.2))
         model.add(Flatten())
         model.add(Dropout(0.2))
-        model.add(Dense(1024,activation='relu',kernel_constraint=maxnorm(3)))
+        model.add(Dense(noveltyDetectionLayerSize,activation='relu',kernel_constraint=maxnorm(3)))
         model.add(Dropout(0.2))
         model.add(Dense(num_classes, activation='softmax'))
         sgd = SGD(lr = 0.1, decay=1e-6, momentum=0.9, nesterov=True)
@@ -110,7 +110,7 @@ class CIFAR10(BaseModel):
                                    horizontal_flip=True,
                                    preprocessing_function=self.preprocess_input),
             samples_per_epoch=config.nb_train_samples,
-            nb_epoch=self.nb_epoch,
+            nb_epoch=config.nb_epoch,
             validation_data=self.get_validation_datagen(preprocessing_function=self.preprocess_input),
             nb_val_samples=config.nb_validation_samples,
             callbacks=self.get_callbacks(config.get_fine_tuned_weights_path(), patience=self.fine_tuning_patience),
