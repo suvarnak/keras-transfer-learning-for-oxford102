@@ -59,7 +59,7 @@ class CIFAR10(BaseModel):
         model.add(Dropout(0.2))
         model.add(Flatten())
         model.add(Dropout(0.2))
-        model.add(Dense(noveltyDetectionLayerSize,activation='relu',kernel_constraint=maxnorm(3)))
+        model.add(Dense(self.noveltyDetectionLayerSize,activation='relu',kernel_constraint=maxnorm(3)))
         model.add(Dropout(0.2))
         model.add(Dense(num_classes, activation='softmax'))
         sgd = SGD(lr = 0.1, decay=1e-6, momentum=0.9, nesterov=True)
