@@ -110,7 +110,7 @@ class CIFAR10(BaseModel):
                                    horizontal_flip=True,
                                    preprocessing_function=self.preprocess_input),
             samples_per_epoch=config.nb_train_samples,
-            nb_epoch=config.nb_epoch,
+            nb_epoch=self.nb_epoch,
             validation_data=self.get_validation_datagen(preprocessing_function=self.preprocess_input),
             nb_val_samples=config.nb_validation_samples,
             callbacks=self.get_callbacks(config.get_fine_tuned_weights_path(), patience=self.fine_tuning_patience),
