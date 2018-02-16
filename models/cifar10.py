@@ -57,16 +57,6 @@ class CIFAR10(BaseModel):
 
         model.add(Conv2D(64,(3,3),padding='same',activation='relu'))
         model.add(Dropout(0.2))
-
-        model.add(Conv2D(64,(3,3),padding='same',activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2,2)))
-
-        model.add(Conv2D(128,(3,3),padding='same',activation='relu'))
-        model.add(Dropout(0.2))
-
-        model.add(Conv2D(128,(3,3),padding='same',activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2,2)))
-
         model.add(Flatten())
         model.add(Dropout(0.2))
         model.add(Dense(1024,activation='relu',kernel_constraint=maxnorm(3)))
@@ -84,8 +74,8 @@ class CIFAR10(BaseModel):
         self.make_net_layers_non_trainable(base_model)
 
         x = base_model.output
-        x = GlobalAveragePooling2D()(x)
-        x = Dense(self.noveltyDetectionLayerSize, activation='elu', name=self.noveltyDetectionLayerName)(x)
+        #x = GlobalAveragePooling2D()(x)
+        #x = Dense(self.noveltyDetectionLayerSize, activation='elu', name=self.noveltyDetectionLayerName)(x)
         predictions = Dense(len(config.classes), activation='softmax')(x)
         self.model = Model(input=base_model.input, output=predictions)
 
