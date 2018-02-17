@@ -11,10 +11,11 @@ from keras.layers import Dropout
 from keras.layers import Flatten
 from keras.layers import MaxPooling2D
 from keras.constraints import maxnorm
-from pathlib import pathlib
 from keras.utils import np_utils
 import numpy as np
 from keras.datasets import cifar10
+
+import os.path
 
 
 import config
@@ -37,7 +38,7 @@ class CIFAR10(BaseModel):
         if not self.freeze_layers_number:
             self.freeze_layers_number = 5
 
-        self.img_size = (32, 32)
+        self.img_size = (32, 32,3)
 
     def _create(self):
         if(os.path.isfile(self.filename)):
@@ -50,7 +51,7 @@ class CIFAR10(BaseModel):
         else:
             print("Model Json does not exists!!")
             model = Sequential()
-            model.add(Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=img_size))
+            model.add(Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=self.img_size))
             model.add(Dropout(0.2))
             model.add(Conv2D(32,(3,3),padding='same', activation='relu'))
             model.add(MaxPooling2D(pool_size=(2,2)))
@@ -60,7 +61,7 @@ class CIFAR10(BaseModel):
             model.add(Dropout(0.2))
             model.add(Dense(1024,activation='relu',kernel_constraint=maxnorm(3)))
             model.add(Dropout(0.2))
-            model.add(Dense(num_classes, activation='softmax'))
+            model.add(Dense(self.num_classes, activation='softmax'))
             sgd = SGD(lr = 0.1, decay=1e-6, momentum=0.9, nesterov=True)
             # save model architecture in json
             model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
@@ -81,19 +82,18 @@ class CIFAR10(BaseModel):
             # Fit model
             (x_train, y_train), (x_test, y_test) = cifar10.load_data()
             # Convert and pre-processing
-            num_classes=10
-            y_train = np_utils.to_categorical(y_train, num_classes)
-            y_test = np_utils.to_categorical(y_test, num_classes)
+            y_train = np_utils.to_categorical(y_train, self.num_classes)
+            y_test = np_utils.to_categorical(y_test, self.num_classes)
             x_train = x_train.astype('float32')
             x_test = x_test.astype('float32')
             x_train  /= 255
             x_test /= 255           
-            #history = model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, validation_data=(x_test,y_test),shuffle=True)
-            #print(history)
+            history = model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs, validation_data=(x_test,y_test),shuffle=True)
+            print(history)
             base_model = model
             #self.make_net_layers_non_trainable(base_model)
             x = base_model.output
-            predictions = Dense(num_classes, activation='softmax')(x)
+            predictions = Dense(self.num_classes, activation='softmax')(x)
             model = Model(input=base_model.input, output=predictions)
             model.save("cifar_model.h5")
 
