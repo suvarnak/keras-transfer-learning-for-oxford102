@@ -14,6 +14,7 @@ from keras.constraints import maxnorm
 from keras.utils import np_utils
 import numpy as np
 from keras.datasets import cifar10
+from keras.models import model_from_json
 
 import os.path
 
@@ -23,27 +24,20 @@ from .base_model import BaseModel
 
 
 class CIFAR10(BaseModel):
-    noveltyDetectionLayerName = 'fc1'
-    noveltyDetectionLayerSize = 1024
-    freeze_layers_number = 6
-    num_classes=10
-    batch_size = 32 
-    epochs =1
-    img_size = (32, 32)
-    filename = "vanilla_cnn.json"
+    noveltyDetectionLayerName = 'fc2'
+    noveltyDetectionLayerSize = 4096
 
-# 32 examples in a mini-batch, smaller batch size means more updates in one epoch
     def __init__(self, *args, **kwargs):
         super(CIFAR10, self).__init__(*args, **kwargs)
-        if not self.freeze_layers_number:
-            self.freeze_layers_number = 5
+        self.num_classes=10
+        self.epochs=1
+        self.img_size = (32,32)
 
-        self.img_size = (32, 32,3)
-
-    def _create(self):
+    def getVanillaCNN(self):
+        self.filename = "cifar10_model.json"
         if(os.path.isfile(self.filename)):
             print("Model Json Exists!!")
-            json_file = open('cifar10_model.json', 'r')
+            json_file = open(self.filename, 'r')
             loaded_model_json = json_file.read()
             json_file.close()
             loaded_model = model_from_json(loaded_model_json)
@@ -51,7 +45,7 @@ class CIFAR10(BaseModel):
         else:
             print("Model Json does not exists!!")
             self.model = Sequential()
-            self.model.add(Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=self.img_size))
+            self.model.add(Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=self.img_size + (3,)))
             self.model.add(Dropout(0.2))
             self.model.add(Conv2D(32,(3,3),padding='same', activation='relu'))
             self.model.add(MaxPooling2D(pool_size=(2,2)))
@@ -63,17 +57,19 @@ class CIFAR10(BaseModel):
             self.model.add(Dropout(0.2))
             self.model.add(Dense(self.num_classes, activation='softmax'))
             sgd = SGD(lr = 0.1, decay=1e-6, momentum=0.9, nesterov=True)
-            # save model architecture in json
+            ## save model architecture in json
             self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
             json_string = self.model.to_json()
             json_file = open('cifar10_model.json', 'w')
             json_file.write(json_string)
             json_file.close()
-        filename = "cifar10_model.h5"
-        if(os.path.isfile(filename)):    
+            print("Model Json saved!!")
+
+        self.filename = "cifar10_model.h5"
+        if(os.path.isfile(self.filename)):    
             # load weights into new model
-            self.model.load_weights("cifar_model.h5")
-            print("Loaded model from disk")
+            self.model.load_weights(self.filename)
+            print("Loaded model from disk   ....")
         else:
             print("Model weights file does not exists!!")
             print("training Model on cifar")
@@ -86,8 +82,7 @@ class CIFAR10(BaseModel):
             x_test = x_test.astype('float32')
             x_train  /= 255
             x_test /= 255           
-            history = self.model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs, validation_data=(x_test,y_test),shuffle=True)
-            print(history)
+            self.model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs, validation_data=(x_test,y_test),shuffle=True)
             base_model = self.model
             #self.make_net_layers_non_trainable(base_model)
             x = base_model.output
@@ -95,23 +90,20 @@ class CIFAR10(BaseModel):
             self.model = Model(input=base_model.input, output=predictions)
             self.model.save("cifar_model.h5")
 
+    def _create(self):
+        self.getVanillaCNN()
+        base_model = self.model
+        self.make_net_layers_non_trainable(base_model)
 
+        x = base_model.output
+        x = Flatten()(x)
+        x = Dense(4096, activation='elu', name='fc1')(x)
+        x = Dropout(0.6)(x)
+        x = Dense(self.noveltyDetectionLayerSize, activation='elu', name=self.noveltyDetectionLayerName)(x)
+        x = Dropout(0.6)(x)
+        predictions = Dense(len(config.classes), activation='softmax', name='predictions')(x)
 
-    def preprocess_input(self, x):
-        x /= 255.
-        x -= 0.5
-        x *= 2.
-        return x
-
-    def load_img(self, img_path):
-        img = image.load_img(img_path, target_size=self.img_size)
-        x = image.img_to_array(img)
-        x = np.expand_dims(x, axis=0)
-        return self.preprocess_input(x)[0]
-
-    @staticmethod
-    def apply_mean(image_data_generator):
-        pass
+        self.model = Model(input=base_model.input, output=predictions)
 
 
 def inst_class(*args, **kwargs):
