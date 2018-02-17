@@ -81,7 +81,8 @@ class CIFAR10(BaseModel):
             x_train = x_train.astype('float32')
             x_test = x_test.astype('float32')
             x_train  /= 255
-            x_test /= 255           
+            x_test /= 255    
+            self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])       
             self.model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs, validation_data=(x_test,y_test),shuffle=True)
             base_model = self.model
             #self.make_net_layers_non_trainable(base_model)
