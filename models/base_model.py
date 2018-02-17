@@ -19,7 +19,7 @@ class BaseModel(object):
         self.model = None
         self.class_weight = class_weight
         self.nb_epoch = nb_epoch
-        self.fine_tuning_patience = 50
+        self.fine_tuning_patience = 100
         self.batch_size = 32
         self.freeze_layers_number = freeze_layers_number
         self.img_size = (224, 224)
@@ -100,7 +100,7 @@ class BaseModel(object):
                 layer.trainable = True
 
     @staticmethod
-    def get_callbacks(weights_path, patience=30, monitor='val_loss'):
+    def get_callbacks(weights_path, patience=100, monitor='val_loss'):
         early_stopping = EarlyStopping(verbose=1, patience=patience, monitor=monitor)
         model_checkpoint = ModelCheckpoint(weights_path, save_best_only=True, save_weights_only=True, monitor=monitor)
         return [early_stopping, model_checkpoint]
