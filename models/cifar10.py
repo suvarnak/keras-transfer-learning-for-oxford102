@@ -46,15 +46,17 @@ class CIFAR10(BaseModel):
             print("Model Json does not exists!!")
             self.model = Sequential()
             self.model.add(Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=self.img_size + (3,)))
-            self.model.add(Dropout(0.2))
+            self.model.add(MaxPooling2D(pool_size=(2,2)))
             self.model.add(Conv2D(32,(3,3),padding='same', activation='relu'))
             self.model.add(MaxPooling2D(pool_size=(2,2)))
             self.model.add(Conv2D(64,(3,3),padding='same',activation='relu'))
+            self.model.add(MaxPooling2D(pool_size=(2,2)))
+            self.model.add(Conv2D(64,(3,3),padding='same',activation='relu'))
+            self.model.add(MaxPooling2D(pool_size=(2,2)))
             self.model.add(Dropout(0.2))
+            self.model.add(MaxPooling2D(pool_size=(2,2)))
             self.model.add(Flatten())
-            self.model.add(Dropout(0.2))
-            self.model.add(Dense(1024,activation='relu',kernel_constraint=maxnorm(3)))
-            self.model.add(Dropout(0.2))
+            self.model.add(Dense(512,activation='relu',kernel_constraint=maxnorm(3)))
             self.model.add(Dense(self.num_classes, activation='softmax'))
             sgd = SGD(lr = 0.1, decay=1e-6, momentum=0.9, nesterov=True)
             ## save model architecture in json
@@ -63,6 +65,7 @@ class CIFAR10(BaseModel):
             json_file = open('cifar10_model.json', 'w')
             json_file.write(json_string)
             json_file.close()
+            print(self.model.summary())
             print("Model Json saved!!")
 
         self.filename = "cifar10_model.h5"
@@ -90,21 +93,16 @@ class CIFAR10(BaseModel):
             #x = base_model.output
             #predictions = Dense(self.num_classes, activation='softmax')(x)
             #self.model = Model(input=base_model.input, output=predictions)
-            self.model.save("cifar_model.h5")
+            self.model.save("cifar10_model.h5")
 
     def _create(self):
         self.getVanillaCNN()
         base_model = self.model
         self.make_net_layers_non_trainable(base_model)
-
         x = base_model.output
-        x = Flatten()(x)
-        x = Dense(4096, activation='elu', name='fc1')(x)
-        x = Dropout(0.6)(x)
+        x = Dense(512, activation='elu', name='fc1')(x)
         x = Dense(self.noveltyDetectionLayerSize, activation='elu', name=self.noveltyDetectionLayerName)(x)
-        x = Dropout(0.6)(x)
         predictions = Dense(len(config.classes), activation='softmax', name='predictions')(x)
-
         self.model = Model(input=base_model.input, output=predictions)
 
 
