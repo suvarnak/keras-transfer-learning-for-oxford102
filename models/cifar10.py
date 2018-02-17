@@ -81,14 +81,15 @@ class CIFAR10(BaseModel):
             x_train = x_train.astype('float32')
             x_test = x_test.astype('float32')
             x_train  /= 255
-            x_test /= 255    
+            x_test /= 255                
+            sgd = SGD(lr = 0.1, decay=1e-6, momentum=0.9, nesterov=True)
             self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])       
             self.model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs, validation_data=(x_test,y_test),shuffle=True)
-            base_model = self.model
+            #base_model = self.model
             #self.make_net_layers_non_trainable(base_model)
-            x = base_model.output
-            predictions = Dense(self.num_classes, activation='softmax')(x)
-            self.model = Model(input=base_model.input, output=predictions)
+            #x = base_model.output
+            #predictions = Dense(self.num_classes, activation='softmax')(x)
+            #self.model = Model(input=base_model.input, output=predictions)
             self.model.save("cifar_model.h5")
 
     def _create(self):
