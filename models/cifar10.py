@@ -28,7 +28,7 @@ class CIFAR10(BaseModel):
     freeze_layers_number = 6
     num_classes=10
     batch_size = 32 
-    epochs =5
+    epochs =1
     img_size = (32, 32,3)
     filename = "vanilla_cnn.json"
 
