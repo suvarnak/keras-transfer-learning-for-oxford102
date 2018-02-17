@@ -29,7 +29,7 @@ class CIFAR10(BaseModel):
     num_classes=10
     batch_size = 32 
     epochs =1
-    img_size = (32, 32,3)
+    img_size = (32, 32)
     filename = "vanilla_cnn.json"
 
 # 32 examples in a mini-batch, smaller batch size means more updates in one epoch
