@@ -115,29 +115,6 @@ class CIFAR10(BaseModel):
     def apply_mean(image_data_generator):
         pass
 
-    def _fine_tuning(self):
-        self.freeze_top_layers()
-
-        self.model.compile(
-            loss='categorical_crossentropy',
-            optimizer=SGD(lr=1e-4, decay=1e-6, momentum=0.9, nesterov=True),
-            metrics=['accuracy'])
-
-        self.model.fit_generator(
-            self.get_train_datagen(rotation_range=30.,
-                                   shear_range=0.2,
-                                   zoom_range=0.2,
-                                   horizontal_flip=True,
-                                   preprocessing_function=self.preprocess_input),
-            samples_per_epoch=config.nb_train_samples,
-            nb_epoch=1,
-            validation_data=self.get_validation_datagen(preprocessing_function=self.preprocess_input),
-            nb_val_samples=config.nb_validation_samples,
-            callbacks=self.get_callbacks(config.get_fine_tuned_weights_path(), patience=self.fine_tuning_patience),
-            class_weight=self.class_weight)
-
-        self.model.save(config.get_model_path())
-
 
 def inst_class(*args, **kwargs):
     return CIFAR10(*args, **kwargs)
