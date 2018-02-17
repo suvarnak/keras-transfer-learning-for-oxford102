@@ -47,34 +47,32 @@ class CIFAR10(BaseModel):
             loaded_model_json = json_file.read()
             json_file.close()
             loaded_model = model_from_json(loaded_model_json)
-            model= loaded_model
+            self.model= loaded_model
         else:
             print("Model Json does not exists!!")
-            model = Sequential()
-            model.add(Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=self.img_size))
-            model.add(Dropout(0.2))
-            model.add(Conv2D(32,(3,3),padding='same', activation='relu'))
-            model.add(MaxPooling2D(pool_size=(2,2)))
-            model.add(Conv2D(64,(3,3),padding='same',activation='relu'))
-            model.add(Dropout(0.2))
-            model.add(Flatten())
-            model.add(Dropout(0.2))
-            model.add(Dense(1024,activation='relu',kernel_constraint=maxnorm(3)))
-            model.add(Dropout(0.2))
-            model.add(Dense(self.num_classes, activation='softmax'))
+            self.model = Sequential()
+            self.model.add(Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=self.img_size))
+            self.model.add(Dropout(0.2))
+            self.model.add(Conv2D(32,(3,3),padding='same', activation='relu'))
+            self.model.add(MaxPooling2D(pool_size=(2,2)))
+            self.model.add(Conv2D(64,(3,3),padding='same',activation='relu'))
+            self.model.add(Dropout(0.2))
+            self.model.add(Flatten())
+            self.model.add(Dropout(0.2))
+            self.model.add(Dense(1024,activation='relu',kernel_constraint=maxnorm(3)))
+            self.model.add(Dropout(0.2))
+            self.model.add(Dense(self.num_classes, activation='softmax'))
             sgd = SGD(lr = 0.1, decay=1e-6, momentum=0.9, nesterov=True)
             # save model architecture in json
-            model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
-            json_string = model.to_json()
+            self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+            json_string = self.model.to_json()
             json_file = open('cifar10_model.json', 'w')
             json_file.write(json_string)
             json_file.close()
-
-
         filename = "cifar10_model.h5"
         if(os.path.isfile(filename)):    
             # load weights into new model
-            model.load_weights("cifar_model.h5")
+            self.model.load_weights("cifar_model.h5")
             print("Loaded model from disk")
         else:
             print("Model weights file does not exists!!")
@@ -88,14 +86,14 @@ class CIFAR10(BaseModel):
             x_test = x_test.astype('float32')
             x_train  /= 255
             x_test /= 255           
-            history = model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs, validation_data=(x_test,y_test),shuffle=True)
+            history = self.model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs, validation_data=(x_test,y_test),shuffle=True)
             print(history)
-            base_model = model
+            base_model = self.model
             #self.make_net_layers_non_trainable(base_model)
             x = base_model.output
             predictions = Dense(self.num_classes, activation='softmax')(x)
-            model = Model(input=base_model.input, output=predictions)
-            model.save("cifar_model.h5")
+            self.model = Model(input=base_model.input, output=predictions)
+            self.model.save("cifar_model.h5")
 
 
 

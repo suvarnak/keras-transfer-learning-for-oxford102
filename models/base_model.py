@@ -30,7 +30,7 @@ class BaseModel(object):
 
     def _fine_tuning(self):
         self.freeze_top_layers()
-
+        print(model.summary())
         self.model.compile(
             loss='categorical_crossentropy',
             optimizer=Adam(lr=1e-5),
