@@ -87,12 +87,20 @@ class CIFAR10(BaseModel):
             x_test /= 255                
             sgd = SGD(lr = 0.1, decay=1e-6, momentum=0.9, nesterov=True)
             self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])       
-            self.model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs, validation_data=(x_test,y_test),shuffle=True)
+            history=self.model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs, validation_data=(x_test,y_test),shuffle=True)
             #base_model = self.model
             #self.make_net_layers_non_trainable(base_model)
             #x = base_model.output
             #predictions = Dense(self.num_classes, activation='softmax')(x)
             #self.model = Model(input=base_model.input, output=predictions)
+            acc = history.history['acc']
+            val_acc = history.history['val_acc']
+            loss = history.history['loss']
+            val_loss = history.history['val_loss']
+            print("Training Accuracy",acc)
+            print("Validation Accuracy",val_acc)
+            print("Loss",loss)
+            print("Validation Loss",val_loss)
             self.model.save("cifar10_model.h5")
 
     def _create(self):

@@ -31,8 +31,12 @@ def parse_args():
 
 
 def get_files(path):
+    print("$$$",path)
+    for name in glob.glob(path+'/*/*.jpg'):
+        print (name)
+
     if os.path.isdir(path):
-        files = glob.glob(path + '*.jpg')
+        files = glob.glob(path + '/*/*.jpg')
     elif path.find('*') > 0:
         files = glob.glob(path)
     else:

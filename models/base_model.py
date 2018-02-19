@@ -40,7 +40,7 @@ class BaseModel(object):
         callbacks = self.get_callbacks(config.get_fine_tuned_weights_path(), patience=self.fine_tuning_patience)
 
         if util.is_keras2():
-            self.model.fit_generator(
+            history = self.model.fit_generator(
                 train_data,
                 steps_per_epoch=config.nb_train_samples / float(self.batch_size),
                 epochs=self.nb_epoch,
@@ -49,7 +49,7 @@ class BaseModel(object):
                 callbacks=callbacks,
                 class_weight=self.class_weight)
         else:
-            self.model.fit_generator(
+            history = self.model.fit_generator(
                 train_data,
                 samples_per_epoch=config.nb_train_samples,
                 nb_epoch=self.nb_epoch,
@@ -57,6 +57,14 @@ class BaseModel(object):
                 nb_val_samples=config.nb_validation_samples,
                 callbacks=callbacks,
                 class_weight=self.class_weight)
+        acc = history.history['acc']
+        val_acc = history.history['val_acc']
+        loss = history.history['loss']
+        val_loss = history.history['val_loss']
+        print("Fine Tuning Accuracy",acc)
+        print("Validation Accuracy",val_acc)
+        print("Fine Tuning Loss",loss)
+        print("Validation Loss",val_loss)
 
         self.model.save(config.get_model_path())
 
