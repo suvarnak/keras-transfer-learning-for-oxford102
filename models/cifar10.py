@@ -65,7 +65,7 @@ class CIFAR10(BaseModel):
             json_file = open('cifar10_model.json', 'w')
             json_file.write(json_string)
             json_file.close()
-            print(self.model.summary())
+            #print(self.model.summary())
             print("Model Json saved!!")
 
         self.filename = "cifar10_model.h5"

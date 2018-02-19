@@ -32,9 +32,6 @@ def parse_args():
 
 def get_files(path):
     print("$$$",path)
-    for name in glob.glob(path+'/*/*.jpg'):
-        print (name)
-
     if os.path.isdir(path):
         files = glob.glob(path + '/*/*.jpg')
     elif path.find('*') > 0:
@@ -114,7 +111,7 @@ def predict(path):
     if not args.store_activations:
         for i, p in enumerate(predictions):
             recognized_class = list(classes_in_keras_format.keys())[list(classes_in_keras_format.values()).index(p)]
-            print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
+            #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
                                                                        recognized_class))
 
         if args.accuracy:
