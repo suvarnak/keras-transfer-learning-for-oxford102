@@ -30,7 +30,7 @@ class CIFAR10(BaseModel):
     def __init__(self, *args, **kwargs):
         super(CIFAR10, self).__init__(*args, **kwargs)
         self.num_classes=10
-        self.epochs=1
+        self.epochs=100
         self.img_size = (32,32)
 
     def getVanillaCNN(self):
@@ -75,7 +75,7 @@ class CIFAR10(BaseModel):
             print("Loaded model from disk   ....")
         else:
             print("Model weights file does not exists!!")
-            print("training Model on cifar")
+            print("training Model on cifar........")
             # Fit model
             (x_train, y_train), (x_test, y_test) = cifar10.load_data()
             # Convert and pre-processing
