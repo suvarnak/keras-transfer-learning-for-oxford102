@@ -112,7 +112,7 @@ def predict(path):
         for i, p in enumerate(predictions):
             recognized_class = list(classes_in_keras_format.keys())[list(classes_in_keras_format.values()).index(p)]
             #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
-                                                                       recognized_class))
+            #                                                          recognized_class))
 
         if args.accuracy:
             print('Accuracy {}'.format(accuracy_score(y_true=y_trues, y_pred=predictions)))
