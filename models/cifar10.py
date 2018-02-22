@@ -30,7 +30,7 @@ class CIFAR10(BaseModel):
     def __init__(self, *args, **kwargs):
         super(CIFAR10, self).__init__(*args, **kwargs)
         self.num_classes=10
-        self.epochs=100
+        self.epochs=10
         self.img_size = (32,32)
 
     def getVanillaCNN(self):

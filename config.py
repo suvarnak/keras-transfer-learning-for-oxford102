@@ -15,6 +15,7 @@ MODEL_INCEPTION_V3 = 'inception_v3'
 MODEL_RESNET50 = 'resnet50'
 MODEL_RESNET152 = 'resnet152'
 MODEL_CIFAR10 = 'cifar10'
+MODEL_CATSDOGS ='cats_dogs_model'
 model = MODEL_RESNET50
 
 bf_train_path = join_path(trained_dir, 'bottleneck_features_train.npy')
