@@ -90,8 +90,8 @@ class CATSDOGS(BaseModel):
             from os.path import join as join_path
             import os
             abspath = os.path.dirname(os.path.abspath(__file__))
-            train_dir = join_path(abspath, 'pretraining_data/cats_and_dogs_small/train/')
-            validation_dir = join_path(abspath, 'pretraining_data/cats_and_dogs_small/valid/')
+            train_dir = join_path(abspath, 'pretraining_data/cats_and_dogs/train/')
+            validation_dir = join_path(abspath, 'pretraining_data/cats_and_dogs/valid/')
             
             # All images will be rescaled by 1./255
             train_datagen = ImageDataGenerator(rescale=1./255)
