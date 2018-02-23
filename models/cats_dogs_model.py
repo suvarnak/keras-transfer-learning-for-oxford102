@@ -102,14 +102,14 @@ class CATSDOGS(BaseModel):
                     train_dir,
                     # All images will be resized to 150x150
                     target_size=(150, 150),
-                    batch_size=20,
+                    batch_size=16,
                     # Since we use binary_crossentropy loss, we need binary labels
                     class_mode='binary')
 
             validation_generator = test_datagen.flow_from_directory(
                     validation_dir,
                     target_size=(150, 150),
-                    batch_size=10,
+                    batch_size=16,
                     class_mode='binary')
             history = self.model.fit_generator(
                 train_generator,
