@@ -5,7 +5,7 @@ import numpy as np
 import glob
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.externals import joblib
-
+from matplotlib import pyplot as plt
 import config
 import util
 
@@ -112,7 +112,14 @@ def predict(path):
         for i, p in enumerate(predictions):
             recognized_class = list(classes_in_keras_format.keys())[list(classes_in_keras_format.values()).index(p)]
             #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
-            #                                                          recognized_class))
+            #                                                             recognized_class))
+            if(y_trues[i] != p):
+                print("Failed predictions!!")
+                print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
+                                                                          recognized_class))
+            
+                #plt.imshow(inputs[i])
+                #plt.show()
 
         if args.accuracy:
             print('Accuracy {}'.format(accuracy_score(y_true=y_trues, y_pred=predictions)))
