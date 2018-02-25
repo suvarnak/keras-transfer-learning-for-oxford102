@@ -6,7 +6,6 @@ from keras.layers import Input
 from keras.optimizers import Adam
 import numpy as np
 from sklearn.externals import joblib
-from matplotlib import pyplot as plt
 import config
 import util
 

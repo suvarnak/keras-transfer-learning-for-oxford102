@@ -6,6 +6,8 @@ import glob
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.externals import joblib
 from matplotlib import pyplot as plt
+from PIL import Image
+
 import config
 import util
 
@@ -117,9 +119,11 @@ def predict(path):
                 print("Failed predictions!!")
                 print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
                                                                           recognized_class))
-            
-                #plt.imshow(inputs[i])
-                #plt.show()
+                print(files[i])
+                pil_im = Image.open(files[i])
+                np_im=np.array(pil_im)
+                plt.imshow(np_im)
+                plt.show()
 
         if args.accuracy:
             print('Accuracy {}'.format(accuracy_score(y_true=y_trues, y_pred=predictions)))
