@@ -115,18 +115,18 @@ def predict(path):
             recognized_class = list(classes_in_keras_format.keys())[list(classes_in_keras_format.values()).index(p)]
             #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
             #                                                           recognized_class))
-            print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i], p,recognized_class))
+            #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i], p,recognized_class))
             
             #print("predictions!!", y_trues[i],"    ", p)
 
             if(y_trues[i] != p):
                 #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
-                                                                          recognized_class))
+                #                                                         recognized_class))
                 print(files[i])
-                pil_im = Image.open(files[i])
-                np_im=np.array(pil_im)
-                plt.imshow(np_im)
-                plt.show()
+                #pil_im = Image.open(files[i])
+                # np_im=np.array(pil_im)
+                # plt.imshow(np_im)
+                # plt.show()
 
         if args.accuracy:
             print('Accuracy {}'.format(accuracy_score(y_true=y_trues, y_pred=predictions)))
