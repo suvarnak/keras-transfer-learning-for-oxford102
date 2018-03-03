@@ -97,27 +97,30 @@ def predict(path):
         if not args.store_activations:
             # Warm up the model
             if n == 0:
-                print('Warming up the model')
+                #print('Warming up the model')
                 start = time.clock()
                 model.predict(np.array([inputs[0]]))
                 end = time.clock()
-                print('Warming up took {} s'.format(end - start))
+                #print('Warming up took {} s'.format(end - start))
 
             # Make predictions
             start = time.clock()
             out = model.predict(np.array(inputs))
             end = time.clock()
             predictions[n_from:n_to] = np.argmax(out, axis=1)
-            print('Prediction on batch {} took: {}'.format(n, end - start))
+            #print('Prediction on batch {} took: {}'.format(n, end - start))
 
     if not args.store_activations:
         for i, p in enumerate(predictions):
             recognized_class = list(classes_in_keras_format.keys())[list(classes_in_keras_format.values()).index(p)]
             #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
-            #                                                             recognized_class))
+            #                                                           recognized_class))
+            print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i], p,recognized_class))
+            
+            #print("predictions!!", y_trues[i],"    ", p)
+
             if(y_trues[i] != p):
-                print("Failed predictions!!")
-                print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
+                #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
                                                                           recognized_class))
                 print(files[i])
                 pil_im = Image.open(files[i])

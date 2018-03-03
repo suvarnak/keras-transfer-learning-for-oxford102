@@ -19,7 +19,7 @@ def parse_args():
         config.MODEL_VGG16,
         config.MODEL_CIFAR10,
         config.MODEL_CATSDOGS])
-    parser.add_argument('--nb_epoch', type=int, default=1000)
+    parser.add_argument('--nb_epoch', type=int, default=10)
     parser.add_argument('--freeze_layers_number', type=int, help='will freeze the first N layers and unfreeze the rest')
     return parser.parse_args()
 
