@@ -8,7 +8,6 @@ np.random.seed(1337)  # for reproducibility
 import util
 import config
 
-finetuning_history=None
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -40,9 +39,8 @@ def train(nb_epoch, freeze_layers_number):
         class_weight=util.get_class_weight(config.train_dir),
         nb_epoch=nb_epoch,
         freeze_layers_number=freeze_layers_number)
-    finetuning_history = model.train()
+    model.train()
     print('Training is finished!')
-    print("history",self.finetuning_history)
 
 
 if __name__ == '__main__':

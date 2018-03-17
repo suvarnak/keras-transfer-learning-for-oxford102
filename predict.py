@@ -106,6 +106,7 @@ def predict(path):
             # Make predictions
             start = time.clock()
             out = model.predict(np.array(inputs))
+            print(out)
             end = time.clock()
             predictions[n_from:n_to] = np.argmax(out, axis=1)
             #print('Prediction on batch {} took: {}'.format(n, end - start))
@@ -113,8 +114,8 @@ def predict(path):
     if not args.store_activations:
         for i, p in enumerate(predictions):
             recognized_class = list(classes_in_keras_format.keys())[list(classes_in_keras_format.values()).index(p)]
-            #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
-            #                                                           recognized_class))
+            print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
+                                                                       recognized_class))
             #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i], p,recognized_class))
             
             #print("predictions!!", y_trues[i],"    ", p)
@@ -152,11 +153,13 @@ if __name__ == '__main__':
         config.model = args.model
 
     util.set_img_format()
+    util.set_classes_from_train_dir()
+
     model_module = util.get_model_class_instance()
     model = model_module.load()
 
-    classes_in_keras_format = util.get_classes_in_keras_format()
-
+    classes_in_keras_format = util.get_finetuned_classes_in_keras_format()
+    #print("$$$$",classes_in_keras_format)
     predict(args.path)
 
     if args.execution_time:

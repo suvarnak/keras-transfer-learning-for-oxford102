@@ -144,7 +144,9 @@ def get_class_weight(d):
 def set_classes_from_train_dir():
     """Returns classes based on directories in train directory"""
     d = config.train_dir
-    config.classes = sorted([o for o in os.listdir(d) if os.path.isdir(os.path.join(d, o))])
+    print("@@@@setting classes", config.train_dir)
+    config.finetuned_classes = sorted([o for o in os.listdir(d) if os.path.isdir(os.path.join(d, o))])
+    print("!!!!!",config.finetuned_classes)
 
 
 def override_keras_directory_iterator_next():
@@ -165,6 +167,11 @@ def override_keras_directory_iterator_next():
 
     DirectoryIterator.next = custom_next
 
+
+def get_finetuned_classes_in_keras_format():
+    if config.finetuned_classes:
+        return dict(zip(config.finetuned_classes, range(len(config.finetuned_classes))))
+    return None
 
 def get_classes_in_keras_format():
     if config.classes:
