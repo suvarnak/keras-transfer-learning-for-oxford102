@@ -13,6 +13,7 @@ from keras.utils import np_utils
 import numpy as np
 from keras.datasets import cifar10
 from keras.models import model_from_json
+from keras.models import load_model
 
 import os, shutil
 
@@ -33,7 +34,7 @@ class CATSDOGS(BaseModel):
         self.img_size = (150,150)
 
     def getVanillaCNN(self):
-        self.filename = "catsdogs_model.json"
+        self.filename = "model-cats_dogs_model.json"
         if(path.isfile(self.filename)):
             print("Model Json Exists!!")
             json_file = open(self.filename, 'r')
@@ -104,13 +105,13 @@ class CATSDOGS(BaseModel):
                     target_size=(150, 150),
                     batch_size=16,
                     # Since we use binary_crossentropy loss, we need binary labels
-                    class_mode='binary')
+                    class_mode='categorical')
 
             validation_generator = test_datagen.flow_from_directory(
                     validation_dir,
                     target_size=(150, 150),
                     batch_size=16,
-                    class_mode='binary')
+                    class_mode='binarcategoricaly')
             history = self.model.fit_generator(
                 train_generator,
                 steps_per_epoch=10,
@@ -126,16 +127,26 @@ class CATSDOGS(BaseModel):
             print("Loss",loss)
             print("Validation Loss",val_loss)
             self.model.save("cats_dogs_model.h5")
+    def loadVanillaCNN(self):
+        if(path.isfile(config.get_model_path())):    
+            # load weights into new model
+            self.model = load_model(config.get_model_path())
+            #self.model.load_weights(config.get_model_path())
+            print("Loaded model from disk   ....",config.get_model_path())
+        else:
+            print("Model weights file does not exists!!")
 
     def _create(self):
-        self.getVanillaCNN()
+        self.loadVanillaCNN()
         base_model = self.model
         self.make_net_layers_non_trainable(base_model)
         x = base_model.output
-        x = Dense(512, activation='elu', name='fc1')(x)
-        x = Dense(self.noveltyDetectionLayerSize, activation='elu', name=self.noveltyDetectionLayerName)(x)
+        #x = Dense(512, activation='elu', name='fc1')(x)
+        #x = Dense(self.noveltyDetectionLayerSize, activation='elu', name=self.noveltyDetectionLayerName)(x)
         predictions = Dense(len(config.classes), activation='softmax', name='predictions')(x)
-        self.model = Model(input=base_model.input, output=predictions)
+        self.model = Model(input=base_model.input, output=x)
+        print(self.model.summary())
+
 
 
 def inst_class(*args, **kwargs):

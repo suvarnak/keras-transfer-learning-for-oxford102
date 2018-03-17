@@ -4,10 +4,13 @@ from keras.applications.imagenet_utils import preprocess_input
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Input
 from keras.optimizers import Adam
+from keras.models import load_model
+
 import numpy as np
 from sklearn.externals import joblib
 import config
 import util
+from os import path
 
 
 class BaseModel(object):
@@ -64,7 +67,7 @@ class BaseModel(object):
         print("Fine Tuning Loss",loss)
         print("Fine Tuning Validation Loss",val_loss)
 
-        self.model.save(config.get_model_path())
+        self.model.save(config.get_finetuned_model_path())
 
     def train(self):
         print("Creating model...")
@@ -76,15 +79,29 @@ class BaseModel(object):
         print("Classes are saved")
 
     def load(self):
-        print("Creating model")
+        print("loading finetuned model")
         self.load_classes()
         self._create()
         self.model.load_weights(config.get_fine_tuned_weights_path())
         return self.model
 
+    def load_pretrained_model(self):
+        print("Loading pre-trained model    ******",config.get_model_path())
+        self.load_classes()
+        if(path.isfile(config.get_model_path())):    
+            # load weights into new model
+            self.model = load_model(config.get_model_path())
+            #self.model.load_weights(config.get_model_path())
+            print("Loaded model from disk   ....",config.get_model_path())
+        else:
+            print("Model weights file does not exists!!")
+        return self.model
+
     @staticmethod
     def save_classes():
-        joblib.dump(config.classes, config.get_classes_path())
+        #joblib.dump(config.classes, config.get_classes_path())
+        joblib.dump(config.finetuned_classes, config.get_finetuned_classes_path())
+
 
     def get_input_tensor(self):
         if util.get_keras_backend_name() == 'theano':
@@ -118,7 +135,7 @@ class BaseModel(object):
 
     @staticmethod
     def load_classes():
-        config.classes = joblib.load(config.get_classes_path())
+        config.finetuned_classes = joblib.load(config.get_finetuned_classes_path())
 
     def load_img(self, img_path):
         img = image.load_img(img_path, target_size=self.img_size)
@@ -129,9 +146,9 @@ class BaseModel(object):
     def get_train_datagen(self, *args, **kwargs):
         idg = ImageDataGenerator(*args, **kwargs)
         self.apply_mean(idg)
-        return idg.flow_from_directory(config.train_dir, target_size=self.img_size, classes=config.classes)
+        return idg.flow_from_directory(config.train_dir, target_size=self.img_size, classes=config.finetuned_classes,class_mode='categorical')
 
     def get_validation_datagen(self, *args, **kwargs):
         idg = ImageDataGenerator(*args, **kwargs)
         self.apply_mean(idg)
-        return idg.flow_from_directory(config.validation_dir, target_size=self.img_size, classes=config.classes)
+        return idg.flow_from_directory(config.validation_dir, target_size=self.img_size, classes=config.finetuned_classes,class_mode='categorical')

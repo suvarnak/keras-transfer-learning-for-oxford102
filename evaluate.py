@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
     util.set_img_format()
     model_module = util.get_model_class_instance()
-    model = model_module.load_pretrained_model()
+    #model = model_module.load_pretrained_model()
 
     classes_in_keras_format = util.get_classes_in_keras_format()
     if(config.model=='cifar10'):

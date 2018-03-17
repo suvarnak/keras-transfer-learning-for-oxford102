@@ -71,7 +71,7 @@ class CIFAR10(BaseModel):
         self.filename = "cifar10_model.h5"
         if(os.path.isfile(self.filename)):    
             # load weights into new model
-            self.model.load_weights(self.filename)
+            self.model.load_model(self.filename)
             print("Loaded model from disk   ....")
         else:
             print("Model weights file does not exists!!")
