@@ -14,6 +14,8 @@ import numpy as np
 from keras.datasets import cifar10
 from keras.models import model_from_json
 from keras.models import load_model
+from keras import backend as K
+from keras.preprocessing.image import ImageDataGenerator
 
 import os, shutil
 
@@ -33,19 +35,20 @@ class CATSDOGS(BaseModel):
         self.epochs=10
         self.img_size = (150,150)
 
+
     def getVanillaCNN(self):
         self.filename = "model-cats_dogs_model.json"
+        img_width, img_height = 150, 150
         if(path.isfile(self.filename)):
             print("Model Json Exists!!")
             json_file = open(self.filename, 'r')
             loaded_model_json = json_file.read()
             json_file.close()
             loaded_model = model_from_json(loaded_model_json)
-            self.model= loaded_model
+            model= loaded_model
         else:
             print("Model Json does not exists!!")
             # dimensions of our images.
-            img_width, img_height = 150, 150
 
             if K.image_data_format() == 'channels_first':
                 input_shape = (3, img_width, img_height)
@@ -75,17 +78,18 @@ class CATSDOGS(BaseModel):
 
             categorical_labels = to_categorical([0,1], num_classes=2)
 
-            model.compile(loss='categorical_crossentropy',
-                        optimizer='rmsprop',
-                        metrics=['accuracy'])
-
-            json_string = self.model.to_json()
+            json_string = model.model.to_json()
             json_file = open('model-cats_dogs_model.json', 'w')
             json_file.write(json_string)
             json_file.close()
             print("Model Json saved!!")
 
         self.filename = "./trained/model-cats_dogs_model.h5"
+        model.compile(loss='categorical_crossentropy',
+                        optimizer='rmsprop',
+                        metrics=['accuracy'])
+
+
         if(path.isfile(self.filename)):    
             # load weights into new model
             self.model.load_weights(self.filename)
@@ -94,8 +98,8 @@ class CATSDOGS(BaseModel):
             print("Model weights file does not exists!!")
             print("training Model on cats and dogs dataset........")
             # this is the augmentation configuration we will use for training
-            train_data_dir = 'code-colt/data/cats_and_dogs//train'
-            validation_data_dir = 'code-colt/data/cats_and_dogs//valid'
+            train_data_dir = '../code-colt/data/cats_and_dogs//train'
+            validation_data_dir = '../code-colt/data/cats_and_dogs//valid'
             nb_train_samples = 2000
             nb_validation_samples = 800
             epochs = 50
@@ -147,14 +151,14 @@ class CATSDOGS(BaseModel):
             print("Loaded model from disk   ....",config.get_model_path())
         else:
             print("Model weights file does not exists!!")
-            getVanillaCNN()
+            self.getVanillaCNN()
 
     def _create(self):
         self.loadVanillaCNN()
         base_model = self.model
         self.make_net_layers_non_trainable(base_model)
         x = base_model.output
-        x = Dense(512, activation='elu', name='fc1')(x)
+        #x = Dense(512, activation='elu', name='fc1')(x)
         #x = Dense(self.noveltyDetectionLayerSize, activation='elu', name=self.noveltyDetectionLayerName)(x)
         predictions = Dense(len(config.classes), activation='softmax', name='predictions')(x)
         self.model = Model(input=base_model.input, output=x)
