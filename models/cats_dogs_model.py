@@ -74,10 +74,13 @@ class CATSDOGS(BaseModel):
             model.add(Dropout(0.5))
             model.add(Dense(2))
             model.add(Activation('softmax'))
+            model.compile(loss='categorical_crossentropy',
+                        optimizer='rmsprop',
+                        metrics=['accuracy'])
+
             from keras.utils.np_utils import to_categorical
-
             categorical_labels = to_categorical([0,1], num_classes=2)
-
+            print(model)
             json_string = model.model.to_json()
             json_file = open('model-cats_dogs_model.json', 'w')
             json_file.write(json_string)
@@ -85,9 +88,6 @@ class CATSDOGS(BaseModel):
             print("Model Json saved!!")
 
         self.filename = "./trained/model-cats_dogs_model.h5"
-        model.compile(loss='categorical_crossentropy',
-                        optimizer='rmsprop',
-                        metrics=['accuracy'])
 
 
         if(path.isfile(self.filename)):    
