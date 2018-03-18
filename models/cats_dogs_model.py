@@ -143,7 +143,7 @@ class CATSDOGS(BaseModel):
             print("Validation Accuracy",val_acc)
             print("Loss",loss)
             print("Validation Loss",val_loss)
-            self.model.save(self.filename)
+            model.save(self.filename)
     def loadVanillaCNN(self):
         if(path.isfile(config.get_model_path())):    
             # load weights into new model
