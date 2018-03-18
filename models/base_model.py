@@ -119,6 +119,7 @@ class BaseModel(object):
             print("Freezing {} layers".format(self.freeze_layers_number))
             for layer in self.model.layers[:self.freeze_layers_number]:
                 layer.trainable = False
+                print(layer.name)
             for layer in self.model.layers[self.freeze_layers_number:]:
                 layer.trainable = True
 

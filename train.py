@@ -42,7 +42,7 @@ def train(nb_epoch, freeze_layers_number):
         freeze_layers_number=freeze_layers_number)
     finetuning_history = model.train()
     print('Training is finished!')
-    print("history",self.finetuning_history)
+    #print("history",self.finetuning_history)
 
 
 if __name__ == '__main__':
