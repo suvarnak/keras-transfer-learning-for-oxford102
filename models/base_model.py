@@ -1,3 +1,9 @@
+import numpy as np
+from numpy.random import seed
+np.random.seed(1337)  # for reproducibility
+from tensorflow import set_random_seed
+set_random_seed(1232)
+
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.preprocessing import image
 from keras.applications.imagenet_utils import preprocess_input
@@ -24,7 +30,6 @@ class BaseModel(object):
         self.fine_tuning_patience = 10000
         self.batch_size = 32
         self.freeze_layers_number = freeze_layers_number
-        self.img_size = (224, 224)
 
     def _create(self):
         raise NotImplementedError('subclasses must override _create()')
@@ -119,7 +124,7 @@ class BaseModel(object):
             print("Freezing {} layers".format(self.freeze_layers_number))
             for layer in self.model.layers[:self.freeze_layers_number]:
                 layer.trainable = False
-                print(layer.name)
+                print("freezing layer", layer.name)
             for layer in self.model.layers[self.freeze_layers_number:]:
                 layer.trainable = True
 
@@ -148,7 +153,7 @@ class BaseModel(object):
         idg = ImageDataGenerator(*args, **kwargs)
         self.apply_mean(idg)
         return idg.flow_from_directory(config.train_dir, target_size=self.img_size, classes=config.finetuned_classes,class_mode='categorical')
-
+    
     def get_validation_datagen(self, *args, **kwargs):
         idg = ImageDataGenerator(*args, **kwargs)
         self.apply_mean(idg)

@@ -5,8 +5,6 @@ import numpy as np
 import glob
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.externals import joblib
-from matplotlib import pyplot as plt
-from PIL import Image
 
 import config
 import util
@@ -25,7 +23,7 @@ def parse_args():
     parser.add_argument('--novelty_detection', action='store_true')
     parser.add_argument('--model', type=str, required=True, help='Base model architecture',
                         choices=[config.MODEL_RESNET50, config.MODEL_RESNET152, config.MODEL_INCEPTION_V3,
-                                 config.MODEL_VGG16, config.MODEL_CIFAR10,config.MODEL_CATSDOGS])
+                                 config.MODEL_VGG16,config.MODEL_CATSDOGS])
     parser.add_argument('--data_dir', help='Path to data train directory')
     parser.add_argument('--batch_size', default=500, type=int, help='How many files to predict on at once')
     args = parser.parse_args()
@@ -33,9 +31,8 @@ def parse_args():
 
 
 def get_files(path):
-    print("$$$",path)
     if os.path.isdir(path):
-        files = glob.glob(path + '/*/*.jpg')
+        files = glob.glob(path + '*.jpg')
     elif path.find('*') > 0:
         files = glob.glob(path)
     else:
@@ -97,37 +94,24 @@ def predict(path):
         if not args.store_activations:
             # Warm up the model
             if n == 0:
-                #print('Warming up the model')
+                print('Warming up the model')
                 start = time.clock()
                 model.predict(np.array([inputs[0]]))
                 end = time.clock()
-                #print('Warming up took {} s'.format(end - start))
+                print('Warming up took {} s'.format(end - start))
 
             # Make predictions
             start = time.clock()
             out = model.predict(np.array(inputs))
-            print(out)
             end = time.clock()
             predictions[n_from:n_to] = np.argmax(out, axis=1)
-            #print('Prediction on batch {} took: {}'.format(n, end - start))
+            print('Prediction on batch {} took: {}'.format(n, end - start))
 
     if not args.store_activations:
         for i, p in enumerate(predictions):
             recognized_class = list(classes_in_keras_format.keys())[list(classes_in_keras_format.values()).index(p)]
             print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
                                                                        recognized_class))
-            #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i], p,recognized_class))
-            
-            #print("predictions!!", y_trues[i],"    ", p)
-
-            if(y_trues[i] != p):
-                #print('| should be {} ({}) -> predicted as {} ({})'.format(y_trues[i], files[i].split(os.sep)[-2], p,
-                #                                                         recognized_class))
-                print(files[i])
-                #pil_im = Image.open(files[i])
-                # np_im=np.array(pil_im)
-                # plt.imshow(np_im)
-                # plt.show()
 
         if args.accuracy:
             print('Accuracy {}'.format(accuracy_score(y_true=y_trues, y_pred=predictions)))
@@ -148,18 +132,15 @@ if __name__ == '__main__':
 
     if args.data_dir:
         config.data_dir = args.data_dir
-        config.set_paths()
+        config.set_paths(args.data_dir)
     if args.model:
         config.model = args.model
 
     util.set_img_format()
-    util.set_classes_from_train_dir()
-
     model_module = util.get_model_class_instance()
     model = model_module.load()
 
     classes_in_keras_format = util.get_finetuned_classes_in_keras_format()
-    #print("$$$$",classes_in_keras_format)
     predict(args.path)
 
     if args.execution_time:

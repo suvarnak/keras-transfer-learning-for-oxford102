@@ -5,7 +5,8 @@ abspath = os.path.dirname(os.path.abspath(__file__))
 
 lock_file = os.path.join(abspath, 'lock')
 
-data_dir = join_path(abspath, 'data/sorted')
+data_dir = join_path(abspath)
+
 trained_dir = join_path(abspath, 'trained')
 
 train_dir, validation_dir = None, None
@@ -44,13 +45,13 @@ nb_train_samples = 0
 nb_validation_samples = 0
 
 
-def set_paths():
-    global train_dir, validation_dir
+def set_paths(datadir):
+    global train_dir, validation_dir, data_dir
+    data_dir=datadir
     train_dir = join_path(data_dir, 'train/')
     validation_dir = join_path(data_dir, 'valid/')
-
-
-set_paths()
+    
+set_paths(data_dir)
 
 
 def get_top_model_weights_path():

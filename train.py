@@ -1,9 +1,13 @@
 import numpy as np
+from numpy.random import seed
+np.random.seed(1337)  # for reproducibility
+from tensorflow import set_random_seed
+set_random_seed(1232)
+
 import argparse
 import traceback
 import os
 
-np.random.seed(1337)  # for reproducibility
 
 import util
 import config
@@ -50,7 +54,8 @@ if __name__ == '__main__':
         args = parse_args()
         if args.data_dir:
             config.data_dir = args.data_dir
-            config.set_paths()
+            config.set_paths(args.data_dir)
+            print("%%%%%",config.data_dir)
         if args.model:
             config.model = args.model
 

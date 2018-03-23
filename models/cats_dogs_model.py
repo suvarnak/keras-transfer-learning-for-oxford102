@@ -1,4 +1,9 @@
-#from keras.applications.inception_v3 import InceptionV3 as KerasInceptionV3
+import numpy as np
+from numpy.random import seed
+np.random.seed(1337)  # for reproducibility
+from tensorflow import set_random_seed
+set_random_seed(1232)
+
 from keras.layers import GlobalAveragePooling2D, Dense
 from keras.models import Model
 from keras.optimizers import SGD
